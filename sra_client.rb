@@ -2,16 +2,21 @@
 require 'socket'
 
 loop {
+	IP = "localhost"
+	PORT = 3001
 
-  server = TCPSocket.open( 'localhost', 3001 ) # conecta ao servidor na porta 3001
+  server = TCPSocket.open( IP, PORT ) # Connect to the server
 
-  msg_server = server.recvfrom( 10000 ) # recebe a mensagem -10000 bytes - do servidor
+	# Receive the messenger of the server.
+  msg_server = server.recvfrom( 10000 )
 
   place = msg_server.first.chomp
 
-  if place != "none"
-    File.open('.place_name', 'w') do |p|
-      p.puts place
+	WITHOUT_PLACE = "none"
+
+  if place != WITHOUT_PLACE
+    File.open('.place_name', 'w') do |file|
+      file.puts place
     end
 
     server.puts ''
