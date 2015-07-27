@@ -1,24 +1,26 @@
 # file client_teste.rb
 require 'socket'
 
+IP_LOCAL = UDPSocket.open {|s| s.connect("64.233.187.99", 1); s.addr.last}
 IP = "localhost"
 PORT = 3001
 WITHOUT_PLACE = "none"
+
 
 
 loop {
 
   begin
     server = TCPSocket.open( IP, PORT ) # Connect to the server
+
+    # Receive the messenger of the server.
+
+    server.puts IP_LOCAL
+    
+    msg_server = server.recvfrom( 10000 )
   rescue Errno::ECONNREFUSED
     retry
-  end
-
-
-	# Receive the messenger of the server.
-  begin
-    msg_server = server.recvfrom( 10000 )
-  rescue Errno::ECONNRESET
+   rescue Errno::ECONNRESET
     retry
   end
 
