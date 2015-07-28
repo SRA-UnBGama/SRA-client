@@ -1,26 +1,24 @@
 # file client_teste.rb
 require 'socket'
 
-IP_LOCAL = UDPSocket.open {|s| s.connect("64.233.187.99", 1); s.addr.last}
-IP = "localhost"
 PORT = 3001
 WITHOUT_PLACE = "none"
 
+begin
+  client = TCPServer.open(PORT) # Connect to the server
+rescue Errno::ECONNREFUSED
+  retry
+end
 
 
 loop {
 
+  server = client.accept
+  
   begin
-    server = TCPSocket.open( IP, PORT ) # Connect to the server
-
-    # Receive the messenger of the server.
-
-    server.puts IP_LOCAL
-    
+    # Receive the messenger of the server
     msg_server = server.recvfrom( 10000 )
-  rescue Errno::ECONNREFUSED
-    retry
-   rescue Errno::ECONNRESET
+  rescue Errno::ECONNRESET
     retry
   end
 
@@ -30,7 +28,6 @@ loop {
     File.open('.place_name.txt', 'w') do |file|
       file.puts place
     end
-
     server.puts ''
   else
 
@@ -47,7 +44,7 @@ loop {
 
   end
 
-  sleep(0.01)
-
   server.close
 }
+
+client.close
